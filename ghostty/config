@@ -1,0 +1,21 @@
+auto-update = download
+
+background-opacity = 0.9
+background-blur-radius = 20
+
+font-family = "Monolisa"
+font-family-italic = "Monolisa Italic"
+font-family-bold = "Monolisa SemiBold"
+font-family-bold-italic = "Monolisa SemiBold Italic"
+
+theme = Frankenstein
+
+cursor-style = underline
+shell-integration-features = no-cursor
+
+window-height = 50
+window-width = 200
+macos-titlebar-style = tabs
+quit-after-last-window-closed = true
+
+keybind = global:cmd+grave_accent=toggle_quick_terminal
