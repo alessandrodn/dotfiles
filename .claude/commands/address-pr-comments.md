@@ -12,7 +12,7 @@ Follow these steps in order:
 Use the GitHub GraphQL API to get all review threads on the PR, filtering to `isResolved: false`. For each thread, also retrieve any replies so you can see if the author has already commented.
 
 ```
-gh api graphql -f query='{ repository(owner: "...", name: "...") { pullRequest(number: N) { reviewThreads(first: 50) { nodes { id isResolved comments(first: 10) { nodes { author { login } body } } } } } } }'
+gh api graphql -f query='{ repository(owner: "...", name: "...") { pullRequest(number: N) { reviewThreads(first: 50) { nodes { id isResolved comments(first: 10) { nodes { author { login } body reactions(first: 20) { nodes { content user { login } } } } } } } } } }'
 ```
 
 ## 2. Present the list
@@ -21,15 +21,15 @@ Show the user a numbered list of unresolved threads. For each one include:
 - The file and line (if applicable)
 - The reviewer's comment (truncated to ~150 chars)
 - Any reply already left by the author, clearly marked
+- Emoji reactions on each comment, grouped by type with a count (e.g. 👍 3, 👀 1)
 
 ## 3. Get decisions
 
-For each comment, ask the user what to do. Common outcomes:
-- **Fix** — implement the change
-- **Won't fix** — explain why in the reply, then resolve
-- **Already fixed** — just reply and resolve (no code change needed)
+For each thread, read available signals to propose a suggested action:
+- **Emoji reaction** on the comment left by the author: 👍 → Fix, 👎 → Won't fix
+- **Author's reply** in the thread: read the reply and infer intent from its meaning
 
-Wait for the user to provide decisions on all comments before proceeding.
+Present the full list to the user with a suggested decision for each thread, clearly labelled. Wait for the user to confirm or override each decision before proceeding.
 
 ## 4. Implement changes
 
