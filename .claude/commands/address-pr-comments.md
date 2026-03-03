@@ -25,11 +25,17 @@ Show the user a numbered list of unresolved threads. For each one include:
 
 ## 3. Get decisions
 
-For each thread, read available signals to propose a suggested action:
+For each thread, read available signals to determine the author's intent:
 - **Emoji reaction** on the comment left by the author: 👍 → Fix, 👎 → Won't fix
 - **Author's reply** in the thread: read the reply and infer intent from its meaning
 
-Present the full list to the user with a suggested decision for each thread, clearly labelled. Wait for the user to confirm or override each decision before proceeding.
+Then, independently assess each reviewer comment on its technical merits. Consider: Is the feedback correct? Is there a better approach? Are there trade-offs worth surfacing? Form your own view separately from the author's signals.
+
+Present the full list to the user with, for each thread:
+1. **Your intent** (inferred from emoji/reply): Fix / Won't fix / Unclear
+2. **Claude's take**: A brief, honest opinion on whether the reviewer's point is valid, partially valid, or incorrect — and why
+
+Wait for the user to confirm or override each decision before proceeding.
 
 ## 4. Implement changes
 
