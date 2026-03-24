@@ -1,5 +1,5 @@
 ---
-description: Fetch unresolved PR review comments, present them for decision, implement agreed changes, commit, push, reply to each comment thread, and resolve it.
+description: Fetch unresolved PR review comments, present them for decision, implement agreed changes, commit, push, review and update the PR description, reply to each comment thread, and resolve it.
 argument-hint: "<pr-number>"
 ---
 
@@ -56,9 +56,9 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 
 Extract the ticket prefix from the branch name (e.g. `feature/fs-3679-...` → `FS-3679`).
 
-## 6. Update PR description
+## 6. Review and update PR description
 
-Review the PR description and update it if the changes made in step 4 affect what was previously described. Use `gh pr edit --body "..."` to update. Only update if the description is outdated or incomplete relative to the new state of the PR.
+Always review the PR description after pushing. Compare it against the full set of changes now in the PR (original + changes from step 4). Update it with `gh pr edit --body "..."` if anything is outdated, missing, or no longer accurate. This step is mandatory — do not skip it even if you expect no changes are needed.
 
 ## 7. Reply and resolve
 
