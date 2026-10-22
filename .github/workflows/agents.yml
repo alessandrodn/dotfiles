@@ -1,0 +1,16 @@
+name: agents
+
+on:
+  pull_request:
+    paths: ["agents/**", ".github/workflows/agents.yml"]
+  push:
+    branches: [main]
+    paths: ["agents/**", ".github/workflows/agents.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: sudo apt-get update && sudo apt-get install -y bats
+      - run: bats agents/tests
