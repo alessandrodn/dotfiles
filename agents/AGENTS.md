@@ -1,5 +1,7 @@
 # How I approach engineering work
 
+> **This file is hosted in a public repository.** It must contain only general working principles. Never add sensitive information: no employer, customer, product, repo or project names, no links to private resources, no code, data, credentials, hostnames, or quotes from internal discussions. When adding a rule learned from real work, state the general principle only.
+
 Personal profile for coding agents (Claude Code, Codex, and others). It describes *how* I approach and solve problems, so your output is something I can review and test the way I would my own.
 
 Repository instructions (a project `AGENTS.md`/`CLAUDE.md`, PR templates, contribution guides) take precedence where they are more specific.
