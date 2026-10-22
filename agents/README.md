@@ -11,4 +11,15 @@ echo '@~/Developer/dotfiles/agents/AGENTS.md' >> ~/.claude/CLAUDE.md          # 
 
 Claude Code gets an `@` import instead of a symlink, because it skips a symlinked `~/.claude/CLAUDE.md` in Cowork sessions.
 
+`skills/` holds my workflows (e.g. `post-merge`) as [Agent Skills](https://agentskills.io): one `skills/<name>/SKILL.md` per skill, with `name` and `description` frontmatter. Invoke one with `/<name>` in Claude Code or `$<name>` in Codex.
+
+```sh
+for dir in ~/.claude/skills ~/.agents/skills; do                              # Claude Code, Codex
+  mkdir -p "$dir"
+  for s in ~/Developer/dotfiles/agents/skills/*/; do ln -sfn "${s%/}" "$dir/"; done
+done
+```
+
+Each skill is linked on its own, so both folders can also hold local or tool-installed skills that stay out of this repo. Re-run the loop after adding a skill; it is safe to repeat. The links point at this checkout, so the live skills follow whatever branch is checked out.
+
 If `AGENTS.md` grows large (Codex caps it at 32 KiB), split it into `style/*.md` and reference each file twice: `@style/x.md` (which Claude Code loads) and "Before X, read style/x.md" (which other agents follow on demand).
