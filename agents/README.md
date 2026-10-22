@@ -22,4 +22,11 @@ done
 
 Each skill is linked on its own, so both folders can also hold local or tool-installed skills that stay out of this repo. Re-run the loop after adding a skill; it is safe to repeat. The links point at this checkout, so the live skills follow whatever branch is checked out.
 
+Tests use [bats](https://github.com/bats-core/bats-core) (`brew install bats-core shellcheck`):
+
+```sh
+bats agents/tests        # lint and script tests; CI runs these
+bats agents/tests/live   # each skill through real Claude Code and Codex sessions; needs both logged in and the skills linked
+```
+
 If `AGENTS.md` grows large (Codex caps it at 32 KiB), split it into `style/*.md` and reference each file twice: `@style/x.md` (which Claude Code loads) and "Before X, read style/x.md" (which other agents follow on demand).
