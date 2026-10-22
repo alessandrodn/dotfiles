@@ -1,50 +1,20 @@
 ---
 name: post-merge
-description: Clean up after a PR is merged — checkout main, pull, delete the feature branch, prune origin, and update submodules.
+description: Clean up a local repo after the current branch's PR is merged — switch to the default branch, pull, delete the merged branch, prune remote refs, and update submodules. Use when the user says their PR or branch was merged and wants to clean up, or asks for post-merge cleanup.
 ---
 
-## Your Task
+Run the bundled script from the repository root:
 
-Run the following post-merge cleanup steps in order.
+```bash
+scripts/post-merge.sh
+```
 
-## Steps
+(`scripts/` is next to this file; use its full path.)
 
-1. **Record the current branch name** so it can be deleted after switching away.
-   ```bash
-   git rev-parse --abbrev-ref HEAD
-   ```
+The script exits with:
 
-2. **Checkout the main branch**
-   ```bash
-   git checkout main
-   ```
+- **0**: done. Report its output to the user.
+- **1**: it refused or failed; nothing was deleted. Report the message. Fix the cause only if the user asks (for example, commit or stash uncommitted changes).
+- **2**: it couldn't confirm the branch was merged (no merge commit in the default branch and `gh` doesn't report the PR as merged), so it changed nothing. Tell the user and ask whether to delete the branch anyway. Only if they confirm, rerun it with `--force`.
 
-3. **Pull latest changes**
-   ```bash
-   git pull
-   ```
-
-4. **Delete the feature branch** (use the name recorded in step 1).
-   ```bash
-   git branch -d <branch>
-   ```
-   If the branch was not fully merged according to git (e.g. squash-merged), use `-D` instead and inform the user.
-
-5. **Prune stale remote-tracking references**
-   ```bash
-   git remote prune origin
-   ```
-
-6. **Update submodules**
-   ```bash
-   git submodule update --init --recursive
-   ```
-
-## Expected Outcome
-
-- You are now on `main` with the latest changes.
-- The merged feature branch has been removed locally.
-- Stale remote refs have been pruned.
-- All submodules are up to date.
-
-Report what was done. If there are no submodules, skip step 6 silently.
+Don't run the steps by hand instead of the script.
