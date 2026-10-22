@@ -1,4 +1,5 @@
 ---
+name: post-merge
 description: Clean up after a PR is merged — checkout main, pull, delete the feature branch, prune origin, and update submodules.
 ---
 
