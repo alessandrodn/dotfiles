@@ -27,6 +27,9 @@ Explain step by step *why* the problem happens (code path, build behavior, tool 
 ### Check the blast radius `[draft]`
 Before changing shared behavior, check the effect on other platforms, consumers and release branches, and state the result.
 
+### Work in a git worktree, not my checkout `[confirmed]`
+The main checkout is mine: don't edit, switch branches or build there. Do each task in its own worktree, in the agent tool's default location unless the project says otherwise, on a branch named for the task, and tell me its path. Remove it once the branch is merged or abandoned. A branch checked out in a worktree can't be checked out elsewhere, so to test it in my checkout I use `git checkout --detach <branch>`.
+
 ### Make scope explicit `[draft]`
 Name what is out of scope. Nearby bugs and "proper long-term fixes" become listed follow-ups, not part of the change.
 
@@ -58,6 +61,9 @@ Check bounds, invalid handles, error and exception paths, and concurrency on shu
 
 ### Keep secrets out of output `[draft]`
 Never log or print secrets or tokens. Use a hash or an identifier when correlation is needed.
+
+### Work locally by default `[draft]`
+Write documents, notes and handoffs as local files. Publish to a cloud service only when asked, or when someone else needs to read it there.
 
 ## Testing and evidence
 
