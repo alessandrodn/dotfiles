@@ -41,6 +41,9 @@ Choose the smallest correct change. Avoid extra scripts, generators and tooling 
 ### Generalize only for known growth `[confirmed]`
 Use the simplest form until a second case is concretely expected. Once it is, design so the new case needs no schema or API change (e.g. a map instead of fixed fields).
 
+### Every indirection names its second case `[draft]`
+The previous rule holds inside the code too. A template, callback, registry, interface, shared header or export list is a generalization: write the direct version (a function, a switch, a local type) until a second user exists, and functions always called together become one.
+
 ### One source of truth `[draft]`
 Put repeated code or config in one shared place and vary only what differs, so a future change happens once.
 
@@ -54,7 +57,7 @@ Remove dead code, unused functions and unused dependencies, and ask whether a wh
 A refactor preserves behavior. If behavior changes (return values, early exits, file locations, ordering), call it out and check who depends on it.
 
 ### Names say what things do `[draft]`
-Pick names that describe the actual effect and avoid ambiguous abbreviations.
+Pick names that describe the actual effect and avoid ambiguous abbreviations. A flag reads as a question, a quantity carries its unit, and a type doesn't share its namespace's name. If a reviewer has to ask what a name or a piece of code is for, fix the code rather than explaining it in the thread.
 
 ### Handle edge and failure paths explicitly `[draft]`
 Check bounds, invalid handles, error and exception paths, and concurrency on shutdown. The "theoretically fine" paths are where crashes come from.
@@ -64,6 +67,11 @@ Never log or print secrets or tokens. Use a hash or an identifier when correlati
 
 ### Work locally by default `[draft]`
 Write documents, notes and handoffs as local files. Publish to a cloud service only when asked, or when someone else needs to read it there.
+
+## Language style
+
+### C++: follow the C++ Core Guidelines `[confirmed]`
+Apply the C++ Core Guidelines wherever the codebase allows, and cite the rule ID (e.g. C.65: make move assignment safe for self-assignment) when it drives a choice or answers a review comment.
 
 ## Testing and evidence
 
