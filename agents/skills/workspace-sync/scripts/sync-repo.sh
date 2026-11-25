@@ -110,8 +110,22 @@ elif $dirty; then
   say "on $current" "uncommitted changes"
 fi
 
-gone=$(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == "[gone]" { print $1 }' | tr '\n' ' ')
-[ -z "$gone" ] || say gone "${gone% }"
+# A gone branch checked out in a linked worktree gets its own line: the
+# worktree must be removed before the branch can be deleted.
+gone=""
+for branch in $(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == "[gone]" { print $1 }'); do
+  worktree=$(git worktree list --porcelain | awk -v ref="branch refs/heads/$branch" '
+    /^worktree / { n++; path = substr($0, 10) }
+    n > 1 && $0 == ref { print path }')
+  if [ -z "$worktree" ]; then
+    gone="$gone $branch"
+  elif [ -z "$(git -C "$worktree" status --porcelain)" ]; then
+    say "gone worktree" "$branch at $worktree, clean"
+  else
+    say "gone worktree" "$branch at $worktree, uncommitted changes"
+  fi
+done
+[ -z "$gone" ] || say gone "${gone# }"
 
 # A submodule that borrows objects stores its pinned commit itself when the
 # repo it borrows from doesn't have it yet.
