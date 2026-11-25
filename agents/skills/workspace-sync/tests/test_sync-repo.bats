@@ -73,6 +73,29 @@ advance_remote() {
   git rev-parse --verify --quiet refs/heads/feature
 }
 
+@test "reports a gone branch checked out in a worktree with its path" {
+  start_branch
+  squash_merge_on_remote
+  git switch -q main
+  git worktree add -q ../wt feature
+  run "$SCRIPT" .
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"gone worktree: feature at "*"/wt, clean"* ]] || false
+  [[ "$output" != *"gone: feature"* ]] || false
+  [ -d ../wt ]
+}
+
+@test "reports a gone branch's worktree with changes or untracked files as not clean" {
+  start_branch
+  squash_merge_on_remote
+  git switch -q main
+  git worktree add -q ../wt feature
+  echo new >../wt/untracked.txt
+  run "$SCRIPT" .
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"gone worktree: feature at "*"/wt, uncommitted changes"* ]] || false
+}
+
 @test "--shared reports a missing gc guard, and is quiet once it is set" {
   run "$SCRIPT" --shared .
   [ "$status" -eq 0 ]
