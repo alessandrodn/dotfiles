@@ -1,6 +1,6 @@
 ---
 name: address-pr-comments
-description: Fetch unresolved PR review comments, present them for decision, implement agreed changes, commit, push, review and update the PR description, reply to each comment thread, and resolve it. Use when the user asks to address, handle or resolve review comments on a PR.
+description: Fetch unresolved PR review comments, present them for decision, implement and commit the agreed changes, then, after a final confirmation, push, update the PR description, reply in each thread and resolve it. Use when the user asks to address, handle or resolve review comments on a PR.
 ---
 
 Address all unresolved review comments on a GitHub PR. Use the PR number the user gave; if none, use the current branch's open PR.
@@ -66,20 +66,40 @@ Wait for the user to confirm or override each decision before proceeding.
 
 Make all agreed code/doc changes across the relevant files.
 
-## 5. Commit and push
+## 5. Commit locally
 
-Stage only the modified files (never `git add -A` blindly). Make one small commit per concern, each building on its own, then push.
+Stage only the modified files (never `git add -A` blindly). Make one small commit per concern, each building on its own. Don't push yet.
 
 Write each headline in the repo's convention: check `git log --oneline -10` and any contributing guide. Add a ticket only where the convention uses one and the branch name has it (e.g. `feature/abc-123-...` → `ABC-123`).
 
-## 6. Review and update PR description
+## 6. Draft the PR description update and the replies
 
-Always review the PR description after pushing. Compare it against the full set of changes now in the PR (original + changes from step 4). Update it with `gh pr edit --body "..."` if anything is outdated, missing, or no longer accurate. This step is mandatory — do not skip it even if you expect no changes are needed.
+Always review the PR description against the full set of changes the PR will have (original + changes from step 4). Draft an update if anything is outdated, missing, or no longer accurate. Keep the repo's PR template if it has one. This step is mandatory: do not skip it even if you expect no changes.
 
-## 7. Reply and resolve
+Draft a reply for every thread: what was done, or why it was not actioned.
 
-For every thread (whether fixed or won't-fix):
-1. Post a reply in the thread explaining what was done (or why it was not actioned)
-2. Resolve the thread via the GraphQL `resolveReviewThread` mutation
+## 7. Confirm
 
-Always reply **in the comment thread** (not as a top-level PR comment), then resolve.
+Show the user, together:
+- the new commits (`git log -p @{upstream}..`)
+- the PR description change, as a diff, or "no change"
+- each reply draft, and whether its thread will be resolved: fixed threads yes; won't-fix threads only if the user says so, otherwise the reviewer resolves them
+
+Wait for a yes. Apply any edits the user asks for and show them again.
+
+## 8. Push and publish
+
+1. Push.
+2. If the description changed, write it to a file and run `gh pr edit <number> --body-file <file>`. A file avoids shell quoting problems with backticks or `$`.
+3. For each thread, reply **in the thread**, never as a top-level PR comment. Write the reply to a file:
+   ```
+   gh api graphql -F threadId=<id> -F body=@<file> -f query='
+   mutation($threadId: ID!, $body: String!) {
+     addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: $threadId, body: $body}) { comment { url } }
+   }'
+   ```
+4. Resolve the threads agreed in step 7:
+   ```
+   gh api graphql -F threadId=<id> -f query='
+   mutation($threadId: ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { isResolved } } }'
+   ```
