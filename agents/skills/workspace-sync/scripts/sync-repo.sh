@@ -88,10 +88,12 @@ elif ! git merge-base --is-ancestor "$old" "$new"; then
 elif [ "$current" = "$default" ]; then
   if $dirty; then
     say "$default" "behind origin, not updated: uncommitted changes"
-  else
-    git merge --quiet --ff-only "$upstream"
+  # The dirty check skips untracked files; git refuses only when one is in the way.
+  elif err=$(git merge --quiet --ff-only "$upstream" 2>&1); then
     say "$default" "fast-forwarded ${old:0:9}..${new:0:9}"
     update_submodules . "$old"
+  else
+    say "$default" "behind origin, not updated: ${err%%$'\n'*}"
   fi
 elif git worktree list --porcelain | grep -qxF "branch refs/heads/$default"; then
   say "$default" "behind origin, not updated: checked out in another worktree"

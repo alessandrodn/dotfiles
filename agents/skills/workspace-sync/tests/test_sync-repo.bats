@@ -73,6 +73,18 @@ advance_remote() {
   git rev-parse --verify --quiet refs/heads/feature
 }
 
+@test "reports a fast-forward blocked by an untracked file, and keeps going" {
+  start_branch
+  squash_merge_on_remote
+  git switch -q main
+  echo local >feature.txt
+  run "$SCRIPT" .
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"main: behind origin, not updated: "*"untracked"* ]] || false
+  [[ "$output" == *"gone: feature"* ]] || false
+  [ "$(cat feature.txt)" = local ]
+}
+
 @test "reports a gone branch checked out in a worktree with its path" {
   start_branch
   squash_merge_on_remote
