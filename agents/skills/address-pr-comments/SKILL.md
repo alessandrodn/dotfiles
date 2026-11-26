@@ -46,18 +46,18 @@ Show the user a numbered list of unresolved threads. For each one include:
 - The file and line (if applicable)
 - The reviewer's comment (truncated to ~150 chars)
 - Any reply already left by the PR author (the login from `gh pr view`), clearly marked
-- Emoji reactions on each comment, grouped by type with a count (e.g. 👍 3, 👀 1)
+- Emoji reactions on each comment, grouped by type with a count (e.g. 👍 3, 👀 1). The API returns names: `THUMBS_UP` 👍, `THUMBS_DOWN` 👎, `LAUGH` 😄, `HOORAY` 🎉, `CONFUSED` 😕, `HEART` ❤️, `ROCKET` 🚀, `EYES` 👀.
 
 ## 3. Get decisions
 
 For each thread, read available signals to determine the author's intent:
-- **Emoji reaction** on the comment left by the author: 👍 → Fix, 👎 → Won't fix
+- **Emoji reaction** left by the PR author on the comment: `THUMBS_UP` 👍 → Fix, `THUMBS_DOWN` 👎 → Won't fix
 - **Author's reply** in the thread: read the reply and infer intent from its meaning
 
 Then, independently assess each reviewer comment on its technical merits. Consider: Is the feedback correct? Is there a better approach? Are there trade-offs worth surfacing? Form your own view separately from the author's signals.
 
 Present the full list to the user with, for each thread:
-1. **Your intent** (inferred from emoji/reply): Fix / Won't fix / Unclear
+1. **Author intent (inferred)** from the reaction or reply: Fix / Won't fix / Unclear
 2. **Agent's take**: A brief, honest opinion on whether the reviewer's point is valid, partially valid, or incorrect — and why
 
 Wait for the user to confirm or override each decision before proceeding.
