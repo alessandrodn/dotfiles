@@ -9,17 +9,18 @@ Follow these steps in order:
 
 ## 1. Fetch unresolved threads
 
-Find the PR and the repo it belongs to. If there is no PR, say so and stop.
+Find the PR. If there is no PR, say so and stop.
 
 ```
-gh pr view [<number>] --json number,author --jq '"\(.number) \(.author.login)"'
-gh repo view --json owner,name --jq '"\(.owner.login) \(.name)"'
+gh pr view [<number>] --json number,url,author,headRefName --jq '"\(.number) \(.url) \(.author.login) \(.headRefName)"'
 ```
+
+Take `<owner>` and `<repo>` from the URL (`https://github.com/<owner>/<repo>/pull/<number>`), so they name the repo the PR lives in, even from a fork. `<remote>` is the local remote that holds `<headRefName>`, usually `origin`.
 
 Fetch its review threads with the GraphQL API. While `hasNextPage` is true, repeat with `-F after=<endCursor>`:
 
 ```
-gh api graphql -F owner=<owner> -F name=<repo> -F number=<number> -f query='
+gh api graphql -f owner=<owner> -f name=<repo> -F number=<number> -f query='
 query($owner: String!, $name: String!, $number: Int!, $after: String) {
   repository(owner: $owner, name: $name) {
     pullRequest(number: $number) {
@@ -81,7 +82,7 @@ Draft a reply for every thread: what was done, or why it was not actioned.
 ## 7. Confirm
 
 Show the user, together:
-- the new commits (`git log -p @{upstream}..`)
+- the new commits: `git fetch <remote> <headRefName>`, then `git log -p FETCH_HEAD..HEAD`
 - the PR description change, as a diff, or "no change"
 - each reply draft, and whether its thread will be resolved: fixed threads yes; won't-fix threads only if the user says so, otherwise the reviewer resolves them
 
@@ -89,7 +90,7 @@ Wait for a yes. Apply any edits the user asks for and show them again.
 
 ## 8. Push and publish
 
-1. Push.
+1. Push with `git push <remote> HEAD:<headRefName>`. If it is rejected because the PR branch moved, stop and tell the user. Never force-push.
 2. If the description changed, write it to a file and run `gh pr edit <number> --body-file <file>`. A file avoids shell quoting problems with backticks or `$`.
 3. For each thread, reply **in the thread**, never as a top-level PR comment. Write the reply to a file:
    ```
