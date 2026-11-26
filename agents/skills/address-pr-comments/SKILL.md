@@ -9,18 +9,43 @@ Follow these steps in order:
 
 ## 1. Fetch unresolved threads
 
-Use the GitHub GraphQL API to get all review threads on the PR, filtering to `isResolved: false`. For each thread, also retrieve any replies so you can see if the author has already commented.
+Find the PR and the repo it belongs to. If there is no PR, say so and stop.
 
 ```
-gh api graphql -f query='{ repository(owner: "...", name: "...") { pullRequest(number: N) { reviewThreads(first: 50) { nodes { id isResolved comments(first: 10) { nodes { author { login } body reactions(first: 20) { nodes { content user { login } } } } } } } } } }'
+gh pr view [<number>] --json number,author --jq '"\(.number) \(.author.login)"'
+gh repo view --json owner,name --jq '"\(.owner.login) \(.name)"'
 ```
+
+Fetch its review threads with the GraphQL API. While `hasNextPage` is true, repeat with `-F after=<endCursor>`:
+
+```
+gh api graphql -F owner=<owner> -F name=<repo> -F number=<number> -f query='
+query($owner: String!, $name: String!, $number: Int!, $after: String) {
+  repository(owner: $owner, name: $name) {
+    pullRequest(number: $number) {
+      reviewThreads(first: 50, after: $after) {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          id isResolved path line
+          comments(first: 100) {
+            totalCount
+            nodes { author { login } body reactions(first: 20) { nodes { content user { login } } } }
+          }
+        }
+      }
+    }
+  }
+}'
+```
+
+Keep the threads with `isResolved: false`: the API can't filter them. If a thread's `totalCount` is over 100, say that its later comments weren't read. If no thread is unresolved, say so and stop.
 
 ## 2. Present the list
 
 Show the user a numbered list of unresolved threads. For each one include:
 - The file and line (if applicable)
 - The reviewer's comment (truncated to ~150 chars)
-- Any reply already left by the author, clearly marked
+- Any reply already left by the PR author (the login from `gh pr view`), clearly marked
 - Emoji reactions on each comment, grouped by type with a count (e.g. 👍 3, 👀 1)
 
 ## 3. Get decisions
