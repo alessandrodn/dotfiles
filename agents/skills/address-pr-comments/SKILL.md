@@ -1,6 +1,6 @@
 ---
 name: address-pr-comments
-description: Fetch unresolved PR review comments, present them for decision, implement agreed changes, commit, push, review and update the PR description, reply to each comment thread, and resolve it.
+description: Fetch unresolved PR review comments, present them for decision, implement agreed changes, commit, push, review and update the PR description, reply to each comment thread, and resolve it. Use when the user asks to address, handle or resolve review comments on a PR.
 ---
 
 Address all unresolved review comments on a GitHub PR. Use the PR number the user gave; if none, use the current branch's open PR.
@@ -54,7 +54,7 @@ Commit message format:
 <co-author trailer, if your agent adds one>
 ```
 
-Extract the ticket prefix from the branch name (e.g. `feature/fs-3679-...` → `FS-3679`).
+Extract the ticket prefix from the branch name (e.g. `feature/abc-123-...` → `ABC-123`).
 
 ## 6. Review and update PR description
 
