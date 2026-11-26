@@ -104,6 +104,12 @@ Use the repository's PR template if one exists. Otherwise: What / Why / Approach
 ### Close the loop on review `[draft]`
 Reply in each review thread, then rebase, retest, and say that you did. Expect automated or agent reviewers too, and address their findings explicitly.
 
+## Writing
+
+### Write in my style `[confirmed]`
+Whenever you write prose I will read or send as myself, follow the `my-writing-style` skill: `skills/my-writing-style/SKILL.md`, next to this file.
+@skills/my-writing-style/SKILL.md
+
 ## Reviewing others' work
 
 ### Review tone `[draft]`
