@@ -1,6 +1,6 @@
 ---
 name: address-pr-comments
-description: Fetch unresolved PR review comments, present them for decision, implement and commit the agreed changes, then, after a final confirmation, push, update the PR description, reply in each thread and resolve it. Use when the user asks to address, handle or resolve review comments on a PR.
+description: Fetch unresolved PR review comments, present them for decision, implement and commit the agreed changes, then, after a final confirmation, push, update the PR description, reply in each thread and resolve the agreed ones. Use when the user asks to address, handle or resolve review comments on a PR.
 ---
 
 Address all unresolved review comments on a GitHub PR. Use the PR number the user gave; if none, use the current branch's open PR.
@@ -86,7 +86,7 @@ Show the user, together:
 - the PR description change, as a diff, or "no change"
 - each reply draft, and whether its thread will be resolved: fixed threads yes; won't-fix threads only if the user says so, otherwise the reviewer resolves them
 
-Wait for a yes. Apply any edits the user asks for and show them again.
+Wait for a yes. Apply any edits the user asks for, amending or adding local commits for code changes, and show this step again.
 
 ## 8. Push and publish
 
@@ -104,3 +104,5 @@ Wait for a yes. Apply any edits the user asks for and show them again.
    gh api graphql -F threadId=<id> -f query='
    mutation($threadId: ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { isResolved } } }'
    ```
+
+If any of these fails, stop. List what was published and what wasn't, and don't retry in a loop.
