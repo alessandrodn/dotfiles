@@ -1,6 +1,6 @@
 ---
 name: workspace-sync
-description: Bring every repo in a local workspace folder up to date without touching local work - fetch with prune, follow the remote's default branch, fast-forward it where safe (with its initialized submodules), check shared object stores (git alternates), and report dirty trees, diverged branches and branches whose remote is gone. Use when the user starts the day, says they just arrived, or asks to sync, update or fetch all their repos.
+description: Bring every repo in a local workspace folder up to date without touching local work - fetch with prune, follow the remote's default branch, fast-forward it where safe (with its initialized submodules), check shared object stores (git alternates), and report dirty trees, diverged branches and branches whose remote is gone, including merged worktrees to remove. Use when the user starts the day, says they just arrived, asks to sync, update or fetch all their repos, or to clean up merged branches or worktrees.
 ---
 
 The workspace is described in a `CLAUDE.md` at its root, in a `## Workspace sync` section: the repos to sync, and which of them are **shared** (object stores that other clones borrow from through `objects/info/alternates`). If there is no such section, list the git repos directly under the folder, ask which ones to sync and which are shared, and offer to write the section.
