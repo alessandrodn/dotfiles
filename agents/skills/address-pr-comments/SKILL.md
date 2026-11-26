@@ -68,18 +68,9 @@ Make all agreed code/doc changes across the relevant files.
 
 ## 5. Commit and push
 
-Stage only the modified files (never `git add -A` blindly). Create a single commit covering all the changes, then push.
+Stage only the modified files (never `git add -A` blindly). Make one small commit per concern, each building on its own, then push.
 
-Commit message format:
-```
-<ticket>: Address PR review comments
-
-<brief bullet list of what was changed>
-
-<co-author trailer, if your agent adds one>
-```
-
-Extract the ticket prefix from the branch name (e.g. `feature/abc-123-...` → `ABC-123`).
+Write each headline in the repo's convention: check `git log --oneline -10` and any contributing guide. Add a ticket only where the convention uses one and the branch name has it (e.g. `feature/abc-123-...` → `ABC-123`).
 
 ## 6. Review and update PR description
 
