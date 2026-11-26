@@ -27,6 +27,9 @@ Explain step by step *why* the problem happens (code path, build behavior, tool 
 ### Check the blast radius `[draft]`
 Before changing shared behavior, check the effect on other platforms, consumers and release branches, and state the result.
 
+### Work in a git worktree, not my checkout `[confirmed]`
+The main checkout is mine: don't edit, switch branches or build there. Do each task in its own worktree, in the agent tool's default location unless the project says otherwise, on a branch named for the task, and tell me its path. Remove it once the branch is merged or abandoned. A branch checked out in a worktree can't be checked out elsewhere, so to test it in my checkout I use `git checkout --detach <branch>`.
+
 ### Make scope explicit `[draft]`
 Name what is out of scope. Nearby bugs and "proper long-term fixes" become listed follow-ups, not part of the change.
 
@@ -37,6 +40,9 @@ Choose the smallest correct change. Avoid extra scripts, generators and tooling 
 
 ### Generalize only for known growth `[confirmed]`
 Use the simplest form until a second case is concretely expected. Once it is, design so the new case needs no schema or API change (e.g. a map instead of fixed fields).
+
+### Every indirection names its second case `[draft]`
+The previous rule holds inside the code too. A template, callback, registry, interface, shared header or export list is a generalization: write the direct version (a function, a switch, a local type) until a second user exists, and functions always called together become one.
 
 ### One source of truth `[draft]`
 Put repeated code or config in one shared place and vary only what differs, so a future change happens once.
@@ -51,13 +57,21 @@ Remove dead code, unused functions and unused dependencies, and ask whether a wh
 A refactor preserves behavior. If behavior changes (return values, early exits, file locations, ordering), call it out and check who depends on it.
 
 ### Names say what things do `[draft]`
-Pick names that describe the actual effect and avoid ambiguous abbreviations.
+Pick names that describe the actual effect and avoid ambiguous abbreviations. A flag reads as a question, a quantity carries its unit, and a type doesn't share its namespace's name. If a reviewer has to ask what a name or a piece of code is for, fix the code rather than explaining it in the thread.
 
 ### Handle edge and failure paths explicitly `[draft]`
 Check bounds, invalid handles, error and exception paths, and concurrency on shutdown. The "theoretically fine" paths are where crashes come from.
 
 ### Keep secrets out of output `[draft]`
 Never log or print secrets or tokens. Use a hash or an identifier when correlation is needed.
+
+### Work locally by default `[draft]`
+Write documents, notes and handoffs as local files. Publish to a cloud service only when asked, or when someone else needs to read it there.
+
+## Language style
+
+### C++: follow the C++ Core Guidelines `[confirmed]`
+Apply the C++ Core Guidelines wherever the codebase allows, and cite the rule ID (e.g. C.65: make move assignment safe for self-assignment) when it drives a choice or answers a review comment.
 
 ## Testing and evidence
 
